@@ -16,6 +16,7 @@ class CalcController{
         this.initButtonsEvents();
         this.initKeyboard();
     }
+     
     pasteFromClipboard(){
 
         document.addEventListener('paste', e=>{
@@ -67,6 +68,7 @@ class CalcController{
     playAudio(){
 
         if(this._audioOnOff){
+            this._audio.currentTime = 0;
             this._audio.play();
         }
     }
@@ -131,7 +133,7 @@ class CalcController{
 
         this._operation = [];
         this.lastNumber = '';
-        this,lastOperation = '';
+        this._lastOperator = '';
         this.setLestNumberToDisplay();
     }
 
@@ -167,8 +169,14 @@ class CalcController{
     }
 
     getResult(){
-
-        return eval(this._operation.join(""));
+        try{
+            return eval(this._operation.join(""));
+        }catch(e){
+            setTimeout(()=>{
+                this.setError();
+            },1);            
+        }
+        
     }
 
     calc(){
@@ -386,6 +394,11 @@ class CalcController{
         return this._displayCalcEL.innerHTML;
     }
     set displayCalc(value){
+
+        if(value.toString().length > 10){
+            this.setError();
+            return false;
+        }
         this._displayCalcEL.innerHTML = value;
     }
 
